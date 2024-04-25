@@ -15,7 +15,7 @@ class Command(BaseCommand):
             reader = csv.DictReader(file)
             for row in reader:
                 my_model_instance = Company(
-                    symbol=row['Symbol'],
+                    symbol_val=row['Symbol'],
                 )
                 my_model_instance.save()
 
