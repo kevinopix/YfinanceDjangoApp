@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "company.apps.CompanyConfig",
+    "dataTool.apps.DatatoolConfig",
 ]
 
 MIDDLEWARE = [
