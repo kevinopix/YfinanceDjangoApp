@@ -12,6 +12,19 @@ class Company(models.Model):
         verbose_name_plural = "Companies"
 
 
+class CompanyMetric(models.Model):
+    symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
+    date_min = models.DateTimeField(auto_now_add=False)
+    date_max = models.DateTimeField(auto_now_add=False)
+    last_updated = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.symbol.symbol_val
+    
+    class Meta:
+        verbose_name_plural = "Company Metrics"
+
+
 class StockInfo(models.Model):
     symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=False)

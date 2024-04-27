@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, StockInfo
+from .models import Company, StockInfo, CompanyMetric
 
 # Register your models here.
 class CompanyAdmin(admin.ModelAdmin):
@@ -9,5 +9,10 @@ class StockInfoAdmin(admin.ModelAdmin):
     list_display = ("symbol", "date", "Open", "Close", "Volume")
 
 
+class CompanyMetricAdmin(admin.ModelAdmin):
+    list_display = ("symbol", "date_min", "date_max")
+
+
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(StockInfo, StockInfoAdmin)
+admin.site.register(CompanyMetric, CompanyMetricAdmin)
