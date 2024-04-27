@@ -14,7 +14,7 @@ class Command(BaseCommand):
         table = pq.read_table(parquet_file)
         df = table.to_pandas()
         try:
-            batch_size = 5000
+            batch_size = 4999
             for i in range(0, len(df), batch_size):
                 batch = df[i:i + batch_size]
                 print(f"Batch number {i} uploading now..........")
