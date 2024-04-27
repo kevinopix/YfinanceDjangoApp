@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from company.models import Company
 
 class Command(BaseCommand):
-    help = 'Import data from a CSV file'
+    help = 'Import Company data from CSV'
 
     def add_arguments(self, parser):
         parser.add_argument('csv_file', type=str, help='Path to the CSV file')
