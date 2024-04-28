@@ -11,6 +11,7 @@ import base64
 from datetime import datetime, timedelta
 import yfinance as yf
 from django.views.generic import TemplateView
+from django.contrib import messages 
 
 class checkLatestRecords(View):
     template_name = 'dataTool/check_available_records.html'
@@ -136,6 +137,13 @@ class TopBottomSymbolsView(View):
 
 class PullDataView(View):
     template_name = 'dataTool/stock_data.html'
+    
+    def get(self, request, *args, **kwargs):
+        context = {
+            
+        }
+        return render(request, self.template_name, context)
+    
     def post(self, request, *args, **kwargs):
         # Get the latest date record available
         latest_date_recorded = StockInfo.objects.order_by('-date').first().date
@@ -147,28 +155,31 @@ class PullDataView(View):
         # Fetch stock data for each symbol
         # stock_data_df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol'])
         new_records_count = 0
-        for symbol in symbols_list:
-            try:
-                stock_data = yf.download(symbol, start=yesterday, end=today).reset_index()
-                print(stock_data)
-                stock_data['Symbol'] = symbol
-                for _, row in stock_data.iterrows():
-                    if not StockInfo.objects.filter(symbol__symbol_val=symbol, date=row['Date']).exists():
-                        # Create new StockInfo object if it doesn't already exist
-                        StockInfo.objects.create(
-                            symbol=Company.objects.get(symbol_val=symbol),
-                            date=row['Date'],
-                            Open=row['Open'],
-                            High=row['High'],
-                            Low=row['Low'],
-                            Close=row['Close'],
-                            Adj_Close=row['Adj Close'],
-                            Volume=row['Volume']
-                        )
-                        new_records_count += 1
-            except Exception as e:
-                print(f"Failed to fetch data for {symbol}: {e}")
-
+        try:    
+            for symbol in symbols_list:
+                try:
+                    stock_data = yf.download(symbol, start=yesterday, end=today).reset_index()
+                    print(stock_data)
+                    stock_data['Symbol'] = symbol
+                    for _, row in stock_data.iterrows():
+                        if not StockInfo.objects.filter(symbol__symbol_val=symbol, date=row['Date']).exists():
+                            # Create new StockInfo object if it doesn't already exist
+                            StockInfo.objects.create(
+                                symbol=Company.objects.get(symbol_val=symbol),
+                                date=row['Date'],
+                                Open=row['Open'],
+                                High=row['High'],
+                                Low=row['Low'],
+                                Close=row['Close'],
+                                Adj_Close=row['Adj Close'],
+                                Volume=row['Volume']
+                            )
+                            new_records_count += 1
+                except Exception as e:
+                    print(f"Failed to fetch data for {symbol}: {e}")
+            messages.success(self.request, "All New items successfully added")
+        except Exception as e:
+            messages.error(self.request, str(e))
         # Update context with new_records_count
         context = {
             'new_records_count': new_records_count
@@ -177,11 +188,11 @@ class PullDataView(View):
         return render(request, self.template_name, context)
 
 
-class CheckNewStockDataView(TemplateView):
-    template_name = 'dataTool/stock_data.html'
+# class CheckNewStockDataView(TemplateView):
+#     template_name = 'dataTool/stock_data.html'
 
-    def get(self, request, *args, **kwargs):
-        context = {
+#     def get(self, request, *args, **kwargs):
+#         context = {
             
-        }
-        return render(request, self.template_name, context)
+#         }
+#         return render(request, self.template_name, context)
