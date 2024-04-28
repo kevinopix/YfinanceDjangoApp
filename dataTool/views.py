@@ -5,6 +5,8 @@ from django.db.models import Max
 from company.models import Company, StockInfo
 from django.http import JsonResponse
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import base64

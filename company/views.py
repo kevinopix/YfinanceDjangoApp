@@ -6,6 +6,8 @@ from .models import Company, CompanyMetric, StockInfo
 from django.template.defaulttags import register
 from django.core.paginator import Paginator
 from django.db.models import Max
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -105,7 +107,7 @@ class CompanyAllView(View):
         images = []
         for symbol in symbols:
             plt.figure(figsize=(6, 4))
-            stock_data = StockInfo.objects.filter(symbol__symbol_val=symbol).order_by('-date')[:30]
+            stock_data = StockInfo.objects.filter(symbol__symbol_val=symbol).order_by('-date')[:90]
             dates = [data.date for data in stock_data]  # Extract date objects
             close_prices = [data.Close for data in stock_data]
             plt.plot(dates, close_prices, linestyle='-')
@@ -116,9 +118,9 @@ class CompanyAllView(View):
 
             # Customize x-axis ticks
             num_dates = len(dates)
-            # if num_dates > 5:
-            step = num_dates // 3  # Show 5 ticks
-            plt.xticks(dates[::step], [str(date) for date in dates[::step]])
+            if num_dates > 3:
+                step = num_dates // 3  # Show 5 ticks
+                plt.xticks(dates[::step], [str(date) for date in dates[::step]])
 
             # Convert plot to base64 encoded image
             buffer = io.BytesIO()
