@@ -3,10 +3,14 @@ from django.views import View
 from django.core.paginator import Paginator
 from django.db.models import Max
 from company.models import Company, StockInfo
+from django.http import JsonResponse
 import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import base64
+from datetime import datetime, timedelta
+import yfinance as yf
+from django.views.generic import TemplateView
 
 class checkLatestRecords(View):
     template_name = 'dataTool/check_available_records.html'
@@ -128,3 +132,56 @@ class TopBottomSymbolsView(View):
         image_base64 = base64.b64encode(buffer.read()).decode()
         plt.close(subplot)
         return image_base64
+
+
+class PullDataView(View):
+    template_name = 'dataTool/stock_data.html'
+    def post(self, request, *args, **kwargs):
+        # Get the latest date record available
+        latest_date_recorded = StockInfo.objects.order_by('-date').first().date
+        yesterday = str(latest_date_recorded)
+        today = str(datetime.today().date())
+
+        symbols_list = list(Company.objects.values_list('symbol_val', flat=True))
+        print(symbols_list)
+        # Fetch stock data for each symbol
+        # stock_data_df = pd.DataFrame(columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol'])
+        new_records_count = 0
+        for symbol in symbols_list:
+            try:
+                stock_data = yf.download(symbol, start=yesterday, end=today).reset_index()
+                print(stock_data)
+                stock_data['Symbol'] = symbol
+                for _, row in stock_data.iterrows():
+                    if not StockInfo.objects.filter(symbol__symbol_val=symbol, date=row['Date']).exists():
+                        # Create new StockInfo object if it doesn't already exist
+                        StockInfo.objects.create(
+                            symbol=Company.objects.get(symbol_val=symbol),
+                            date=row['Date'],
+                            Open=row['Open'],
+                            High=row['High'],
+                            Low=row['Low'],
+                            Close=row['Close'],
+                            Adj_Close=row['Adj Close'],
+                            Volume=row['Volume']
+                        )
+                        new_records_count += 1
+            except Exception as e:
+                print(f"Failed to fetch data for {symbol}: {e}")
+
+        # Update context with new_records_count
+        context = {
+            'new_records_count': new_records_count
+        }
+
+        return render(request, self.template_name, context)
+
+
+class CheckNewStockDataView(TemplateView):
+    template_name = 'dataTool/stock_data.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            
+        }
+        return render(request, self.template_name, context)
