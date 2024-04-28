@@ -2,20 +2,81 @@
 {% load static %}
 {% block title %} {{company.symbol_val}} {% endblock %}
 {% block body %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
     <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Company: {{ company.symbol_val }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Date Start: {{ companymetric.date_min }}</p>
-                        <p class="card-text">Date End: {{ companymetric.date_max }}</p>
-                        <small class="text-muted">Created at: {{ company.date_created }}</small>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Last Update: {{ companymetric.last_updated }}</small>
+                <h2><b>Company: {{ company.symbol_val }}</b></h2>
+            </div>
+            <div class="col-md-6">
+                <table>
+                    <tr>
+                        <td>Symbol</td>
+                        <td>{{ stock_info.symbol }}</td>
+                    </tr>
+                    <tr>
+                        <td>Date</td>
+                        <td>{{ stock_info.date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Open</td>
+                        <td>{{ stock_info.Open }}</td>
+                    </tr>
+                    <tr>
+                        <td>High</td>
+                        <td>{{ stock_info.High }}</td>
+                    </tr>
+                    <tr>
+                        <td>Low</td>
+                        <td>{{ stock_info.Low }}</td>
+                    </tr>
+                    <tr>
+                        <td>Close</td>
+                        <td>{{ stock_info.Close }}</td>
+                    </tr>
+                    <tr>
+                        <td>Adj. Close</td>
+                        <td>{{ stock_info.Adj_Close }}</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>{{ stock_info.Volume }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="card-title">Company: {{ company.symbol_val }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">Date Start: {{ companymetric.date_min }}</p>
+                                    <p class="card-text">Date End: {{ companymetric.date_max }}</p>
+                                    <small class="text-muted">Created at: {{ company.date_created }}</small>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="text-muted">Last Update: {{ companymetric.last_updated }}</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
