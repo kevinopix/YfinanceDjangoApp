@@ -13,7 +13,7 @@ class Company(models.Model):
 
 
 class CompanyMetric(models.Model):
-    symbol = models.ForeignKey(Company, on_delete=models.CASCADE, unique=True)
+    symbol = models.OneToOneField(Company, on_delete=models.CASCADE, unique=True)
     date_min = models.DateTimeField(auto_now_add=False)
     date_max = models.DateTimeField(auto_now_add=False)
     last_updated = models.DateTimeField(auto_now_add=True)
@@ -26,7 +26,7 @@ class CompanyMetric(models.Model):
 
 
 class StockInfo(models.Model):
-    symbol = models.ForeignKey(Company, on_delete=models.CASCADE, unique=True)
+    symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=False)
     Open = models.FloatField()
     High = models.FloatField()

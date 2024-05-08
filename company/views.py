@@ -75,13 +75,18 @@ class CompanyAllView(View):
         
         # Convert list of dictionaries to DataFrame
         latest_records_df = pd.DataFrame(records_dict)
-        # Pagination
-        paginator = Paginator(latest_records, 20)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context['page_obj'] = page_obj
-        context['df'] = latest_records_df
-        context['avail_company_count'] = latest_records_df['symbol'].nunique()
+        
+        try:
+            paginator = Paginator(latest_records, 20)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            context['page_obj'] = page_obj
+            context['df'] = latest_records_df
+            context['avail_company_count'] = latest_records_df['symbol'].nunique()
+        except:
+            context['page_obj'] = None
+            context['df'] = None
+            context['avail_company_count'] =None
         return render(request, self.template_name, context)
 
     def get_top_bottom_symbols(self, order_by):

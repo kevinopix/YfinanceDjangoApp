@@ -31,23 +31,25 @@
     <br>
     <div class="container mt-4 mb-4">
         <h2><b>Top Companies by Average Close over the last 90 days on record</b></h2>
+        {% if top_images %}
         <div class="row">
             {% for symbol, image in top_symbols|zip_lists:top_images %}
             <div class="col-md-4">
-                <!-- <h3>{{ symbol }}</h3> -->
                 <img src="data:image/png;base64,{{ image }}" alt="{{ symbol }} Trend" class="img-fluid" />
             </div>
             {% endfor %}
         </div>
+        {% endif %}
         <br>
         <h2><b>Bottom Companies by Average Close over the last 90 days on record</b></h2>
+        {% if bottom_images %}
         <div class="row">
             {% for symbol, image in bottom_symbols|zip_lists:bottom_images %}
             <div class="col-md-4">
-                <!-- <h3>{{ symbol }}</h3> -->
                 <img src="data:image/png;base64,{{ image }}" alt="{{ symbol }} Trend" class="img-fluid" />
             </div>
             {% endfor %}
         </div>
+        {% endif %}
     </div>
 {% endblock %}
