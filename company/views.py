@@ -28,8 +28,8 @@ class CompanyAllView(View):
     def get(self, request, *args, **kwargs):
         # Get top and bottom symbols
         all_symbols = self.get_top_bottom_symbols(order_by='-average_close')
-        top_symbols = all_symbols[:9]
-        bottom_symbols = all_symbols[-9:]
+        top_symbols = all_symbols[:6]
+        bottom_symbols = all_symbols[-6:]
 
         # Ensure top and bottom symbols are exclusive
         common_symbols = set(top_symbols) & set(bottom_symbols)
@@ -92,10 +92,11 @@ class CompanyAllView(View):
         symbol_averages = {}
         for symbol in symbols:
             closing_prices = StockInfo.objects.filter(symbol__symbol_val=symbol
-                                                      ).values_list('Close', flat=True
+                                                      ).exclude(Close__isnull=True).values_list('Close', flat=True
                                                                     ).order_by('-date')[:30]
-            average_price = sum(closing_prices) / len(closing_prices) if closing_prices else None
-            symbol_averages[symbol] = average_price
+            if len(closing_prices) >1:
+                average_price = sum(closing_prices) / len(closing_prices) if closing_prices else None
+                symbol_averages[symbol] = average_price
 
         # Sort symbols based on average closing price
         sorted_symbols = sorted(symbol_averages, key=lambda x: symbol_averages[x] or 0, reverse=(order_by[0] == '-'))

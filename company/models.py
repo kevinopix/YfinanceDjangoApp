@@ -1,7 +1,7 @@
 from django.db import models
 
 class Company(models.Model):
-    symbol_val = models.CharField(max_length=10, null=False, blank=False)
+    symbol_val = models.CharField(max_length=10, null=False, blank=False, unique=True)
     title = models.TextField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -13,7 +13,7 @@ class Company(models.Model):
 
 
 class CompanyMetric(models.Model):
-    symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
+    symbol = models.ForeignKey(Company, on_delete=models.CASCADE, unique=True)
     date_min = models.DateTimeField(auto_now_add=False)
     date_max = models.DateTimeField(auto_now_add=False)
     last_updated = models.DateTimeField(auto_now_add=True)
@@ -26,7 +26,7 @@ class CompanyMetric(models.Model):
 
 
 class StockInfo(models.Model):
-    symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
+    symbol = models.ForeignKey(Company, on_delete=models.CASCADE, unique=True)
     date = models.DateField(auto_now_add=False)
     Open = models.FloatField()
     High = models.FloatField()
